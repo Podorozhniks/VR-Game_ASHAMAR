@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Sliceable
+  - Capsule_sliceable
+  - Chicken_legs
   layers:
   - Default
   - TransparentFX
