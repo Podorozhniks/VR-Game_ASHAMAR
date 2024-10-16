@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 public class EasySlice : MonoBehaviour
 {
-    public LayerMask sliceableLayer;         // Layer mask for sliceable objects
-    public Collider knifeTipCollider;        // Reference to the knife's tip or blade collider
-    public float minSliceableSize = 0.1f;    // Minimum size before the object can be sliced
-    public float sliceCooldown = 0.5f;       // Cooldown to prevent repeated slicing
-    public List<SliceableObjectInfo> sliceableObjectsInfo;  // List of sliceable objects with their materials
+    public LayerMask sliceableLayer;         
+    public Collider knifeTipCollider;        
+    public float minSliceableSize = 0.1f;    
+    public float sliceCooldown = 0.5f;       
+    public List<SliceableObjectInfo> sliceableObjectsInfo;  
 
-    private float lastSliceTime = 0f;        // Timestamp of the last slice
+    private float lastSliceTime = 0f;        
 
-    // Struct to hold sliceable object type and cross-section material
+    
     [System.Serializable]
     public struct SliceableObjectInfo
     {
@@ -142,7 +142,6 @@ public class EasySlice : MonoBehaviour
             // Ensure the sliced object has two materials: one for surface and one for cross-section
             meshRenderer.materials = newMaterials;
 
-            // Add a convex MeshCollider and Rigidbody to allow the object to be sliced again
             MeshCollider meshCollider = slicedHull.AddComponent<MeshCollider>();
             meshCollider.convex = true;
 
