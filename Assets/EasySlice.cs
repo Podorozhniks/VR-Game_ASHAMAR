@@ -1,21 +1,29 @@
-using EzySlice;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using EzySlice;
+using System.Collections.Generic;
 
 public class EasySlice : MonoBehaviour
 {
-    public Material crossSectionMaterial;  // Material to apply to the sliced surface
-    public LayerMask sliceableLayer;       // Layer mask for sliceable objects
-    public Collider knifeTipCollider;      // Reference to the knife's tip or blade collider
-    public float minSliceableSize = 0.1f;  // Minimum size before the object can be sliced
-    public float sliceCooldown = 0.5f;     // Cooldown to prevent repeated slicing
+    public LayerMask sliceableLayer;         
+    public Collider knifeTipCollider;        
+    public float minSliceableSize = 0.1f;    
+    public float sliceCooldown = 0.5f;       
+    public List<SliceableObjectInfo> sliceableObjectsInfo;  
 
-    private float lastSliceTime = 0f;      // Timestamp of the last slice
+    private float lastSliceTime = 0f;        
+
+    
+    [System.Serializable]
+    public struct SliceableObjectInfo
+    {
+        public string objectTag;              // Tag to identify sliceable objects
+        public Material surfaceMaterial;      // Material for the main surface of the object
+        public Material crossSectionMaterial; // Material to apply to sliced cross-sections
+    }
 
     private void Start()
     {
-        // Ensure that the knife tip collider has "Is Trigger" enabled
+        
         if (knifeTipCollider != null)
         {
             knifeTipCollider.isTrigger = true;
@@ -44,7 +52,11 @@ public class EasySlice : MonoBehaviour
             }
 
             Debug.Log("Slicing object: " + other.gameObject.name);  // Log when slicing starts
-            SliceObject(other.gameObject);
+            SliceableObjectInfo sliceableInfo = GetSliceableInfo(other.gameObject);
+            if (sliceableInfo.crossSectionMaterial != null)
+            {
+                SliceObject(other.gameObject, sliceableInfo.surfaceMaterial, sliceableInfo.crossSectionMaterial, sliceableInfo.objectTag);
+            }
         }
         else
         {
@@ -52,30 +64,38 @@ public class EasySlice : MonoBehaviour
         }
     }
 
+    // Retrieve the sliceable object info (including materials) based on object tag
+    private SliceableObjectInfo GetSliceableInfo(GameObject sliceableObject)
+    {
+        foreach (var info in sliceableObjectsInfo)
+        {
+            if (sliceableObject.CompareTag(info.objectTag))
+            {
+                return info;
+            }
+        }
+
+        // Return default SliceableObjectInfo if no match is found
+        Debug.LogWarning("No matching sliceable object found for object: " + sliceableObject.name);
+        return new SliceableObjectInfo();
+    }
+
     private bool IsObjectTooSmall(GameObject obj)
     {
         // Check if the object's bounding box is smaller than the minimum sliceable size
         Bounds bounds = obj.GetComponent<Renderer>().bounds;
-        if (bounds.size.x < minSliceableSize || bounds.size.y < minSliceableSize || bounds.size.z < minSliceableSize)
-        {
-            return true;
-        }
-        return false;
+        return (bounds.size.x < minSliceableSize || bounds.size.y < minSliceableSize || bounds.size.z < minSliceableSize);
     }
 
-    private void SliceObject(GameObject sliceableObject)
+    private void SliceObject(GameObject sliceableObject, Material surfaceMaterial, Material crossSectionMaterial, string objectTag)
     {
         // Set the plane position to the exact position of the knife tip collider inside the object
         Vector3 planePosition = knifeTipCollider.transform.position;
 
-        // Set the plane normal to the forward direction of the knife blade (adjust as per your knife model)
+        // Set the plane normal to the forward direction of the knife blade )
         Vector3 planeNormal = knifeTipCollider.transform.forward;
 
-        // Log the plane position and normal for debugging purposes
-        Debug.Log("Plane Position (Knife Tip): " + planePosition);
-        Debug.Log("Plane Normal (Knife Forward): " + planeNormal);
-
-        // Perform the slice using EzySlice
+        // Perform the slice using EzySlice with the specific cross-section material
         SlicedHull slicedObject = sliceableObject.Slice(planePosition, planeNormal, crossSectionMaterial);
 
         if (slicedObject != null)
@@ -87,8 +107,8 @@ public class EasySlice : MonoBehaviour
             GameObject lowerHull = slicedObject.CreateLowerHull(sliceableObject, crossSectionMaterial);
 
             // Add colliders, rigidbody, and make sure the sliced pieces are sliceable
-            MakeSliceable(upperHull);
-            MakeSliceable(lowerHull);
+            MakeSliceable(upperHull, surfaceMaterial, crossSectionMaterial, objectTag);
+            MakeSliceable(lowerHull, surfaceMaterial, crossSectionMaterial, objectTag);
 
             // Destroy the original object
             Destroy(sliceableObject);
@@ -102,19 +122,43 @@ public class EasySlice : MonoBehaviour
         }
     }
 
-    private void MakeSliceable(GameObject obj)
+    // Apply surface and cross-section materials explicitly to sliced hulls
+    private void MakeSliceable(GameObject slicedHull, Material surfaceMaterial, Material crossSectionMaterial, string objectTag)
     {
-        // Add MeshCollider and set it to convex for physics interaction
-        MeshCollider meshCollider = obj.AddComponent<MeshCollider>();
-        meshCollider.convex = true;
+        if (slicedHull != null)
+        {
+            
+            MeshRenderer meshRenderer = slicedHull.GetComponent<MeshRenderer>();
+            if (meshRenderer == null)
+            {
+                meshRenderer = slicedHull.AddComponent<MeshRenderer>();
+            }
 
-        // Add a Rigidbody so the object can react to physics
-        Rigidbody rb = obj.AddComponent<Rigidbody>();
+            // Create a material array with surface material and cross-section material
+            Material[] newMaterials = new Material[2];
+            newMaterials[0] = surfaceMaterial;      
+            newMaterials[1] = crossSectionMaterial; 
 
-        // Set the sliced object to the same layer as the original sliceable object
-        obj.layer = LayerMask.NameToLayer("Sliceable");  // Ensure the "Sliceable" layer is correctly set in your project
+            // Ensure the sliced object has two materials: one for surface and one for cross-section
+            meshRenderer.materials = newMaterials;
 
-        // Optionally, log the setup
-        Debug.Log("Made object sliceable: " + obj.name);
+            MeshCollider meshCollider = slicedHull.AddComponent<MeshCollider>();
+            meshCollider.convex = true;
+
+            Rigidbody rb = slicedHull.AddComponent<Rigidbody>();
+            rb.mass = 1f;  // You can adjust the mass if necessary
+
+            // Set the sliced object to the sliceable layer to allow it to be sliced again
+            slicedHull.layer = LayerMask.NameToLayer("Sliceable");
+
+            // Assign the correct tag to ensure it remains sliceable
+            slicedHull.tag = objectTag;
+
+            Debug.Log("Made object sliceable again: " + slicedHull.name);
+        }
     }
 }
+
+
+
+
