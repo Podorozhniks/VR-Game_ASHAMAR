@@ -3,7 +3,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace UnitySimpleLiquid
 {
@@ -386,9 +388,28 @@ namespace UnitySimpleLiquid
 			}
 			return edgePosition;
 		}
-		#endregion
+        #endregion
 
-		private void Update()
+        #region FillLogic
+		public void FillBottle()
+		{
+            var flowScale = 0.2f;
+
+            var liquidStep = Time.deltaTime * flowScale;
+            var newLiquidAmmount = liquidContainer.FillAmountPercent + liquidStep;
+
+            // Check if bottle is full and change it 1
+            if (newLiquidAmmount >= 1f)
+            {
+                newLiquidAmmount = 1f;
+            }
+
+            // Transfer liquid to other container (if possible)
+            liquidContainer.FillAmountPercent = newLiquidAmmount;
+        }
+        #endregion
+
+        private void Update()
         {
             // Update bottleneck and surface from last update
             bottleneckPlane = GenerateBottleneckPlane();
@@ -400,5 +421,7 @@ namespace UnitySimpleLiquid
 			currentDrop = 0;
             CheckSpliting();
         }
+
+		
     }
 }
