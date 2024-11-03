@@ -85,9 +85,24 @@ public class EasySlice : MonoBehaviour
     {
         if (slicedHull != null)
         {
+            // Set up materials
             MeshRenderer meshRenderer = slicedHull.GetComponent<MeshRenderer>() ?? slicedHull.AddComponent<MeshRenderer>();
-            meshRenderer.materials = new Material[] { surfaceMaterial, crossSectionMaterial };
 
+            // Retrieve the original materials on the object
+            Material[] originalMaterials = meshRenderer.materials;
+
+            // Create a new array with the original materials and the cross-section material
+            Material[] newMaterials = new Material[originalMaterials.Length + 1];
+            for (int i = 0; i < originalMaterials.Length; i++)
+            {
+                newMaterials[i] = originalMaterials[i]; // Retain the original materials
+            }
+            newMaterials[originalMaterials.Length] = crossSectionMaterial; // Add cross-section material at the end
+
+            // Assign the new materials array to the mesh renderer
+            meshRenderer.materials = newMaterials;
+
+            // Add physics components
             MeshCollider meshCollider = slicedHull.AddComponent<MeshCollider>();
             meshCollider.convex = true;
 
@@ -96,23 +111,34 @@ public class EasySlice : MonoBehaviour
 
             slicedHull.tag = objectTag;
 
+            // Add XR Grab Interactable component
             var grabInteractable = slicedHull.AddComponent<XRGrabInteractable>();
 
-            // Create and configure an attach point for precise hand attachment
+            // Explicitly set interaction layer mask to Everything
+            grabInteractable.interactionLayers = ~0; // Equivalent to "Everything"
+
+            // Create and configure an attach point for close attachment
             GameObject attachPoint = new GameObject("AttachPoint");
             attachPoint.transform.SetParent(slicedHull.transform);
-            attachPoint.transform.localPosition = Vector3.zero;
+            attachPoint.transform.localPosition = Vector3.zero; // Center of the object
             grabInteractable.attachTransform = attachPoint.transform;
 
-            // Set interaction layers to interact with everything
-            grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Everything");
+            // Force close interaction by reducing attachEaseInTime
+            grabInteractable.attachEaseInTime = 0f; // Ensures instant attachment to hand
 
-            grabInteractable.attachEaseInTime = 0f; // Instantly attaches to hand
+            // Optional: allow throwing behavior on detach
             grabInteractable.throwOnDetach = true;
 
-            Debug.Log($"Configured {slicedHull.name} with close attachment.");
+            // Debug log to confirm setup
+            Debug.Log($"Configured {slicedHull.name} with close attachment and interaction layers set to Everything.");
         }
     }
+
+
+
+
+
+
 }
 
 
