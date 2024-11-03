@@ -7,6 +7,10 @@ TagManager:
   - Sliceable
   - Capsule_sliceable
   - Chicken_legs
+  - chicken-fillet
+  - Anchor
+  - KipCutlet-Raw
+  - feathers
   layers:
   - Default
   - TransparentFX
@@ -14,7 +18,7 @@ TagManager:
   - Sliceable
   - Water
   - UI
-  - 
+  - Grabbable
   - 
   - 
   - 

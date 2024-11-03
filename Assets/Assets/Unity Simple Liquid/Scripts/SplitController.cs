@@ -3,7 +3,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace UnitySimpleLiquid
 {
@@ -195,39 +197,62 @@ namespace UnitySimpleLiquid
         {
             IsSpliting = true;
 
-            // Check rotation of liquid container
-            // It conttolls how many liquid we lost and particles size
+            // Check the rotation of the liquid container
             var howLow = Vector3.Dot(Vector3.up, liquidContainer.transform.up);
             var flowScale = 1f - (howLow + 1) * 0.5f + 0.2f;
+
+            // Log rotation and flow scale values
+            Debug.Log($"[DEBUG] Checking container tilt: howLow = {howLow}, flowScale = {flowScale}");
 
             var liquidStep = BottleneckRadiusWorld * splitSpeed * Time.deltaTime * flowScale;
             var newLiquidAmmount = liquidContainer.FillAmountPercent - liquidStep;
 
-            // Check if amount is negative and change it to zero
+            // Log the liquid adjustment
+            Debug.Log($"[DEBUG] Calculated liquid step: {liquidStep}, New Liquid Amount: {newLiquidAmmount}");
+
+            // Check if the liquid amount is below zero and correct it
             if (newLiquidAmmount < 0f)
             {
                 liquidStep = liquidContainer.FillAmountPercent;
                 newLiquidAmmount = 0f;
+
+                // Log the correction
+                Debug.Log("[DEBUG] Liquid amount went negative, correcting to zero.");
             }
 
-            // Transfer liquid to other container (if possible)
+            // Update the liquid amount
             liquidContainer.FillAmountPercent = newLiquidAmmount;
+            Debug.Log($"[DEBUG] Updated Liquid Amount Percent in Source Container: {liquidContainer.FillAmountPercent}");
 
-			RaycastHit containerHit = FindLiquidContainer(splitPos, this.gameObject);
-			
-			//RaycastHit is a struct which gives us everything we need
-			if (containerHit.collider != null)
-			{
-				TransferLiquid(containerHit, liquidStep, flowScale);
+            // Perform a raycast to detect other containers or surfaces below the pour point
+            RaycastHit containerHit = FindLiquidContainer(splitPos, this.gameObject);
 
-			}
-			// Start particles effect
-			StartEffect(splitPos, flowScale);
-		}
+            // Check if another container was hit
+            if (containerHit.collider != null)
+            {
+                Debug.Log($"[INFO] Container detected: {containerHit.collider.gameObject.name}. Initiating liquid transfer...");
+
+                // Attempt to transfer liquid to the detected container
+                TransferLiquid(containerHit, liquidStep, flowScale);
+
+                // Log the successful transfer
+                Debug.Log($"[INFO] Liquid transferred to: {containerHit.collider.gameObject.name}. Amount Transferred: {liquidStep}");
+            }
+            else
+            {
+                Debug.Log("[WARNING] No container detected for liquid transfer.");
+            }
+
+            // Start the particle effect to simulate liquid pouring
+            StartEffect(splitPos, flowScale);
+            Debug.Log("[DEBUG] Particle effect for pouring initiated.");
+        }
 
 
-		//Used for Gizmo only
-		private Vector3 raycasthit;
+
+
+        //Used for Gizmo only
+        private Vector3 raycasthit;
 		private Vector3 raycastStart;
 
 		private void TransferLiquid(RaycastHit hit, float lostPercentAmount, float scale)
@@ -386,9 +411,28 @@ namespace UnitySimpleLiquid
 			}
 			return edgePosition;
 		}
-		#endregion
+        #endregion
 
-		private void Update()
+        #region FillLogic
+		public void FillBottle()
+		{
+            var flowScale = 0.2f;
+
+            var liquidStep = Time.deltaTime * flowScale;
+            var newLiquidAmmount = liquidContainer.FillAmountPercent + liquidStep;
+
+            // Check if bottle is full and change it 1
+            if (newLiquidAmmount >= 1f)
+            {
+                newLiquidAmmount = 1f;
+            }
+
+            // Transfer liquid to other container (if possible)
+            liquidContainer.FillAmountPercent = newLiquidAmmount;
+        }
+        #endregion
+
+        private void Update()
         {
             // Update bottleneck and surface from last update
             bottleneckPlane = GenerateBottleneckPlane();
@@ -400,5 +444,7 @@ namespace UnitySimpleLiquid
 			currentDrop = 0;
             CheckSpliting();
         }
+
+		
     }
 }
