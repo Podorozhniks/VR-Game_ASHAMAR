@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class CuttingBoardManager : MonoBehaviour
 {
     public GameObject kipCutletPrefab; // Assign the KipCutlet-Raw prefab in the Inspector
     public Transform spawnPoint; // Assign an empty GameObject as the spawn point
+    public VisualEffect cuttingBoardEffect; // Assign the poof effect here in the Inspector
 
     private void OnTriggerEnter(Collider other)
     {
@@ -11,6 +13,18 @@ public class CuttingBoardManager : MonoBehaviour
         if (other.CompareTag("chicken-fillet"))
         {
             Debug.Log("Chicken fillet detected on the cutting board.");
+
+            // Play the cutting board poof effect before replacing the chicken
+            if (cuttingBoardEffect != null)
+            {
+                cuttingBoardEffect.transform.position = spawnPoint.position; // Ensure the effect is positioned at the spawn point
+                cuttingBoardEffect.Play();
+                Debug.Log("Cutting board poof effect played.");
+            }
+            else
+            {
+                Debug.LogWarning("Cutting board effect is not assigned.");
+            }
 
             // Replace the chicken fillet with KipCutlet-Raw at the specified spawn point
             ReplaceWithKipCutlet(other.gameObject);
@@ -28,8 +42,6 @@ public class CuttingBoardManager : MonoBehaviour
 
         // Instantiate the KipCutlet-Raw at the spawn point's position and rotation
         GameObject kipCutlet = Instantiate(kipCutletPrefab, spawnPoint.position, spawnPoint.rotation);
-
-        // Optionally, set any additional properties on the new object (e.g., make it sliceable or grabbable)
 
         // Destroy the original chicken fillet object
         Destroy(originalObject);
