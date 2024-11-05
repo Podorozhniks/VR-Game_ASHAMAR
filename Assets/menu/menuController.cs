@@ -9,4 +9,9 @@ public class menuController : MonoBehaviour
     {
         SceneManager.LoadScene("Cutting");
     }
+
+    public void exitGame()
+    {
+        Application.Quit();
+    }
 }

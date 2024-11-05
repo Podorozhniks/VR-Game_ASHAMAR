@@ -6,6 +6,7 @@ public class CuttingBoardManager : MonoBehaviour
     public GameObject kipCutletPrefab; 
     public Transform spawnPoint; 
     public VisualEffect cuttingBoardEffect;
+    public bool CuttingComplete = false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -47,6 +48,8 @@ public class CuttingBoardManager : MonoBehaviour
         Destroy(originalObject);
 
         Debug.Log("Replaced chicken fillet with KipCutlet-Raw at the specified spawn point.");
+
+        CuttingComplete = true;
     }
 }
 
