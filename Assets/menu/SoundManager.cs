@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class SoundManager : MonoBehaviour
 {
     //makes the slider visible in the inspector
     [SerializeField] Slider volumeSlider;
-    
+
     void Start()
     {
         if (!PlayerPrefs.HasKey("musicVolume"))
@@ -16,7 +13,7 @@ public class NewBehaviourScript : MonoBehaviour
             PlayerPrefs.SetFloat("musicVolume", 1);
             Load();
         }
-        
+
     }
 
     public void ChangeVolume()
