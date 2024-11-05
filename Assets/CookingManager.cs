@@ -102,10 +102,12 @@ public class CookingManager : MonoBehaviour
             Debug.LogWarning("Smoke particle effect is not assigned.");
         }
     }
-
+    public bool isCookingComplete { get; private set; } = false;
     private void FinishCooking()
     {
         isCooking = false;
+        isCooking = false;
+        isCookingComplete = true;
 
         if (smokeParticles != null && smokeParticles.isPlaying)
         {

@@ -1,49 +1,54 @@
 using UnityEngine;
-using UnityEngine.VFX; // Import VisualEffect namespace
+using UnityEngine.VFX;
 
 public class RiceCookingManager : MonoBehaviour
 {
     [Header("Rice Pouring")]
-    public ParticleSystem ricePouringParticles;
-    public Transform bowlTransform;
-    public float pouringAngleThreshold = 45f;
+    public ParticleSystem ricePouringParticles;  
+    public Transform bowlTransform;               
+    public float pouringAngleThreshold = 45f;     
 
-    [Header("Rice Cooking Setup")]
-    public GameObject riceModelEmpty;
-    public GameObject riceModelWithRicePrefab;
-    public ParticleSystem smokeParticles;
-    public VisualEffect poofEffect; // VisualEffect component for poof effect
-    public float cookingDuration = 5f;
-    public Collider lidCollider;
-    public Transform lidTargetPosition;
-    public float snapDistance = 0.1f;
-
-    private bool isPouring = false;
-    private bool riceAdded = false;
-    private bool isCooking = false;
-    private bool lidPlaced = false;
-    private float cookingTimer = 0f;
-    private GameObject instantiatedRiceModel;
+    [Header("Rice Cooker Setup")]
+    public GameObject riceObject;                 
+    public ParticleSystem smokeParticles;         
+    public VisualEffect poofEffectAddRice;        
+    public VisualEffect poofEffectCookingDone;    
+    public float cookingDuration = 5f;            
+    public Collider lidCollider;                 
+    public Transform lidTargetPosition;          
+    public float snapDistance = 0.1f;            
+    private bool isPouring = false;               
+    private bool riceAdded = false;               
+    private bool isCooking = false;               
+    private bool lidPlaced = false;             
+    private float cookingTimer = 0f;             
+    private Rigidbody lidRigidbody;              
 
     private void Start()
     {
-        riceModelEmpty.SetActive(true);
+       
+        if (riceObject != null)
+            riceObject.SetActive(false);
 
+       
         if (smokeParticles != null && smokeParticles.isPlaying)
-        {
             smokeParticles.Stop();
-            Debug.Log("Smoke particles stopped at start.");
-        }
+        if (poofEffectAddRice != null)
+            poofEffectAddRice.Stop();
+        if (poofEffectCookingDone != null)
+            poofEffectCookingDone.Stop();
 
-        if (ricePouringParticles != null && ricePouringParticles.isPlaying)
-        {
-            ricePouringParticles.Stop();
-            Debug.Log("Rice pouring particles stopped at start.");
-        }
+        
+        lidRigidbody = lidCollider.GetComponent<Rigidbody>();
+        if (lidRigidbody == null)
+            Debug.LogWarning("Lid does not have a Rigidbody. Please add one for proper physics control.");
+
+        Debug.Log("Initial setup complete: Rice object hidden.");
     }
 
     private void Update()
     {
+       
         float tiltAngle = Vector3.Angle(bowlTransform.up, Vector3.up);
         if (tiltAngle > pouringAngleThreshold && !isPouring && !riceAdded)
         {
@@ -54,6 +59,7 @@ public class RiceCookingManager : MonoBehaviour
             StopPouring();
         }
 
+      
         if (isCooking)
         {
             cookingTimer += Time.deltaTime;
@@ -91,32 +97,19 @@ public class RiceCookingManager : MonoBehaviour
 
     private void AddRiceToCooker()
     {
+       
+        if (poofEffectAddRice != null)
+        {
+            poofEffectAddRice.transform.position = riceObject.transform.position;
+            poofEffectAddRice.Play();
+            Debug.Log("Poof effect played for adding rice.");
+        }
+
+        if (riceObject != null)
+            riceObject.SetActive(true);
+
         riceAdded = true;
-        riceModelEmpty.SetActive(false);
-
-        // Instantiate the new rice model
-        instantiatedRiceModel = Instantiate(riceModelWithRicePrefab, riceModelEmpty.transform.position, riceModelEmpty.transform.rotation);
-
-        // Play the poof effect for adding rice to the cooker
-        if (poofEffect != null)
-        {
-            poofEffect.transform.position = riceModelEmpty.transform.position;
-            poofEffect.Play();
-            Debug.Log("Poof effect played for adding rice to the cooker.");
-        }
-
-        // Reparent lidCollider and smokeParticles if necessary
-        if (lidCollider != null && instantiatedRiceModel != null)
-        {
-            lidCollider.transform.SetParent(instantiatedRiceModel.transform, true);
-        }
-
-        if (smokeParticles != null && instantiatedRiceModel != null)
-        {
-            smokeParticles.transform.SetParent(instantiatedRiceModel.transform, true);
-        }
-
-        Debug.Log("Rice added to the cooker.");
+        Debug.Log("Rice object enabled inside the cooker.");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -138,12 +131,27 @@ public class RiceCookingManager : MonoBehaviour
 
     private void SnapLidInPlace()
     {
+        
         lidCollider.transform.position = lidTargetPosition.position;
         lidCollider.transform.rotation = lidTargetPosition.rotation;
 
+        
         lidPlaced = true;
 
-        Debug.Log("Lid snapped in place.");
+      
+        Rigidbody lidRigidbody = lidCollider.GetComponent<Rigidbody>();
+        if (lidRigidbody != null)
+        {
+            lidRigidbody.isKinematic = true;      
+            lidRigidbody.useGravity = false;      
+            lidRigidbody.constraints = RigidbodyConstraints.FreezeAll;  
+
+            Debug.Log("Lid Rigidbody set to kinematic and all constraints applied.");
+        }
+        else
+        {
+            Debug.LogWarning("Rigidbody component not found on lid. Make sure the lid has a Rigidbody component.");
+        }
     }
 
     private void StartCooking()
@@ -156,32 +164,34 @@ public class RiceCookingManager : MonoBehaviour
             if (smokeParticles != null)
             {
                 smokeParticles.Play();
-                Debug.Log("Smoke particle effect started.");
+                Debug.Log("Smoke particle effect started for cooking.");
             }
         }
     }
-
+    public bool isCookingComplete { get; private set; } = false;
     private void FinishCooking()
     {
         isCooking = false;
+        isCookingComplete = true;
 
         if (smokeParticles != null && smokeParticles.isPlaying)
         {
             smokeParticles.Stop();
-            Debug.Log("Rice cooking completed. Smoke particle effect stopped.");
+            Debug.Log("Cooking completed. Smoke particle effect stopped.");
         }
 
-        // Play the poof effect to signify cooking completed
-        if (poofEffect != null)
+       
+        if (poofEffectCookingDone != null)
         {
-            poofEffect.transform.position = instantiatedRiceModel.transform.position;
-            poofEffect.Play();
-            Debug.Log("Poof effect played for finished cooking.");
+            poofEffectCookingDone.transform.position = riceObject.transform.position;
+            poofEffectCookingDone.Play();
+            Debug.Log("Poof effect played to indicate cooking is done.");
         }
 
         Debug.Log("Rice is fully cooked!");
     }
 }
+
 
 
 
