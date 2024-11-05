@@ -22,6 +22,8 @@ public class CurryCookingManager : MonoBehaviour
     private float cookingTimer = 0f;
     private Collider potCollider;
 
+    public bool CurryDone = false;
+
     private void Start()
     {
         // Get the pot's collider and set it to active but not trigger initially
@@ -173,6 +175,8 @@ public class CurryCookingManager : MonoBehaviour
             poofEffect.Play();
             Debug.Log("Poof effect played to indicate curry cube addition.");
         }
+
+        CurryDone = true;
     }
 }
 
