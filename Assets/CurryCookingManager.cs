@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.VFX;
 using UnitySimpleLiquid;
 
 public class CurryCookingManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class CurryCookingManager : MonoBehaviour
     public LiquidContainer potLiquidContainer;
     public Material curryLiquidMaterial;
     public ParticleSystem smokeParticles;
+    public VisualEffect poofEffect; // Poof effect to play when curry cube is added
     public float requiredOilLevel = 0.1f; // 10% oil required
     public float cookingDuration = 5f; // Time required to cook the ingredients
     public float curryVolumeIncrease = 0.1f; // Volume increase when adding the curry cube, settable in the Inspector
@@ -35,6 +37,13 @@ public class CurryCookingManager : MonoBehaviour
         {
             smokeParticles.Stop();
             Debug.Log("Smoke particles stopped at start.");
+        }
+
+        // Ensure the poof visual effect is not playing initially
+        if (poofEffect != null)
+        {
+            poofEffect.Stop();
+            Debug.Log("Poof effect stopped at start.");
         }
     }
 
@@ -117,10 +126,11 @@ public class CurryCookingManager : MonoBehaviour
             Debug.Log("Smoke particle effect started.");
         }
     }
-
+    public bool isCookingComplete { get; private set; } = false;
     private void FinishCooking()
     {
         isCooking = false;
+        isCookingComplete = true;
 
         // Stop the smoke particle effect
         if (smokeParticles != null && smokeParticles.isPlaying)
@@ -156,8 +166,16 @@ public class CurryCookingManager : MonoBehaviour
     {
         Debug.Log("Curry cube added to the pot.");
         StartCoroutine(UpdateLiquidVisual());
+
+        // Play the poof visual effect when the curry cube is added
+        if (poofEffect != null)
+        {
+            poofEffect.Play();
+            Debug.Log("Poof effect played to indicate curry cube addition.");
+        }
     }
 }
+
 
 
 
