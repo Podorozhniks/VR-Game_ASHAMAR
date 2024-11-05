@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class CoatingManager : MonoBehaviour
 {
-    public Material eggCoatedMaterial;       // Material after coating with eggs
-    public Material flourCoatedMaterial;     // Material after coating with flour
-    public Material pankoCoatedMaterial;     // Material after coating with panko (breadcrumbs)
+    public Material eggCoatedMaterial;      
+    public Material flourCoatedMaterial;    
+    public Material pankoCoatedMaterial;     
 
-    private int coatingStage = 0;            // Tracks the coating stage (0 = none, 1 = egg, 2 = flour, 3 = panko)
-    private Dictionary<string, Material> bowlMaterials; // Dictionary to associate bowl names with materials
+    private int coatingStage = 0;           
+    private Dictionary<string, Material> bowlMaterials; 
 
     private void Start()
     {
-        // Initialize the dictionary with bowl names and corresponding materials
+        
         bowlMaterials = new Dictionary<string, Material>
         {
             { "Bowl - Eggs", eggCoatedMaterial },
@@ -23,18 +23,18 @@ public class CoatingManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Debug log to show what object the chicken fillet collided with
+       
         Debug.Log($"Chicken fillet triggered with: {other.gameObject.name}");
 
-        // Check if the object we collided with is one of the coating bowls
+       
         if (bowlMaterials.ContainsKey(other.gameObject.name))
         {
             Debug.Log($"Trigger detected with a valid coating bowl: {other.gameObject.name}");
 
-            // Get the material for this bowl
+           
             Material nextCoatingMaterial = bowlMaterials[other.gameObject.name];
 
-            // Only apply the material if it matches the next stage in the coating process
+            
             if (IsNextCoatingStage(other.gameObject.name))
             {
                 ApplyCoating(nextCoatingMaterial);
@@ -76,7 +76,7 @@ public class CoatingManager : MonoBehaviour
 
     private void ApplyCoating(Material coatingMaterial)
     {
-        // Get the MeshRenderer and apply the new material for coating
+       
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {

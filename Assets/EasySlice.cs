@@ -17,9 +17,9 @@ public class EasySlice : MonoBehaviour
     [System.Serializable]
     public struct SliceableObjectInfo
     {
-        public string objectTag;              // Tag to identify sliceable objects
-        public Material surfaceMaterial;      // Material for the main surface of the object
-        public Material crossSectionMaterial; // Material to apply to sliced cross-sections
+        public string objectTag;              
+        public Material surfaceMaterial;     
+        public Material crossSectionMaterial; 
     }
 
     private void Start()
@@ -85,24 +85,24 @@ public class EasySlice : MonoBehaviour
     {
         if (slicedHull != null)
         {
-            // Set up materials
+           
             MeshRenderer meshRenderer = slicedHull.GetComponent<MeshRenderer>() ?? slicedHull.AddComponent<MeshRenderer>();
 
-            // Retrieve the original materials on the object
+           
             Material[] originalMaterials = meshRenderer.materials;
 
-            // Create a new array with the original materials and the cross-section material
+            
             Material[] newMaterials = new Material[originalMaterials.Length + 1];
             for (int i = 0; i < originalMaterials.Length; i++)
             {
-                newMaterials[i] = originalMaterials[i]; // Retain the original materials
+                newMaterials[i] = originalMaterials[i];
             }
-            newMaterials[originalMaterials.Length] = crossSectionMaterial; // Add cross-section material at the end
+            newMaterials[originalMaterials.Length] = crossSectionMaterial;
 
-            // Assign the new materials array to the mesh renderer
+           
             meshRenderer.materials = newMaterials;
 
-            // Add physics components
+            
             MeshCollider meshCollider = slicedHull.AddComponent<MeshCollider>();
             meshCollider.convex = true;
 
@@ -115,18 +115,18 @@ public class EasySlice : MonoBehaviour
             var grabInteractable = slicedHull.AddComponent<XRGrabInteractable>();
 
             // Explicitly set interaction layer mask to Everything
-            grabInteractable.interactionLayers = ~0; // Equivalent to "Everything"
+            grabInteractable.interactionLayers = ~0; 
 
             // Create and configure an attach point for close attachment
             GameObject attachPoint = new GameObject("AttachPoint");
             attachPoint.transform.SetParent(slicedHull.transform);
-            attachPoint.transform.localPosition = Vector3.zero; // Center of the object
+            attachPoint.transform.localPosition = Vector3.zero; 
             grabInteractable.attachTransform = attachPoint.transform;
 
-            // Force close interaction by reducing attachEaseInTime
+           
             grabInteractable.attachEaseInTime = 0f; // Ensures instant attachment to hand
 
-            // Optional: allow throwing behavior on detach
+            
             grabInteractable.throwOnDetach = true;
 
             // Debug log to confirm setup

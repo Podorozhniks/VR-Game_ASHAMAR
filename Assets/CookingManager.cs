@@ -6,10 +6,10 @@ public class CookingManager : MonoBehaviour
 {
     public LiquidContainer panLiquidContainer;
     public Material cookedChickenMaterial;
-    public ParticleSystem smokeParticles;   // Particle effect for cooking smoke
-    public VisualEffect poofEffect;         // Visual effect for the poof effect
-    public float requiredOilLevel = 0.1f;   // 10% oil required
-    public float cookingDuration = 5f;      // Time required to cook the chicken
+    public ParticleSystem smokeParticles;  
+    public VisualEffect poofEffect;         
+    public float requiredOilLevel = 0.1f;   
+    public float cookingDuration = 5f;      
 
     private bool hasOil = false;
     private bool isCooking = false;
@@ -26,7 +26,7 @@ public class CookingManager : MonoBehaviour
             Debug.Log("Pan collider found and set to non-trigger mode initially.");
         }
 
-        // Ensure smoke particle effect is ready but not playing at start
+        
         if (smokeParticles != null)
         {
             smokeParticles.Stop();
@@ -93,8 +93,8 @@ public class CookingManager : MonoBehaviour
         {
             Debug.Log("Attempting to start smoke particles...");
             smokeParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            smokeParticles.Clear(); // Ensure it's cleared
-            smokeParticles.Play();  // Attempt to start playing
+            smokeParticles.Clear(); 
+            smokeParticles.Play();  
             Debug.Log($"Smoke particles state after play attempt - isPlaying: {smokeParticles.isPlaying}");
         }
         else

@@ -2,24 +2,24 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public AudioClip audioClip;         // Assign the audio track in the Inspector
-    public float volume = 0.5f;         // Volume level (0.0 to 1.0)
+    public AudioClip audioClip;         
+    public float volume = 0.5f;         
 
     private AudioSource audioSource;
 
     private void Awake()
     {
-        // Ensure only one instance of AudioManager exists
+        
         if (FindObjectsOfType<AudioManager>().Length > 1)
         {
             Destroy(gameObject);
             return;
         }
 
-        // Make this object persist across scenes
+        
         DontDestroyOnLoad(gameObject);
 
-        // Set up the AudioSource component
+        
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = audioClip;
         audioSource.volume = volume;
@@ -28,7 +28,7 @@ public class AudioManager : MonoBehaviour
         PlayBackgroundMusic();
     }
 
-    // Play the background music
+    
     public void PlayBackgroundMusic()
     {
         if (audioSource != null && !audioSource.isPlaying)
@@ -37,7 +37,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // Stop the background music
+    
     public void StopBackgroundMusic()
     {
         if (audioSource != null && audioSource.isPlaying)
