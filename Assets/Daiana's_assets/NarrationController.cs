@@ -9,13 +9,19 @@ public class NarrationController : MonoBehaviour
 
     [SerializeField] public GameObject StepOne;
 
-    private CuttingBoardManager cuttingBoardManager;
+    public CuttingBoardManager cuttingBoardManager;
 
     
 
     public void Start()
     {
         cuttingBoardManager = gameObject.GetComponent<CuttingBoardManager>();
+
+        GameObject otherGameObject = GameObject.Find("CuttingBoardManager");
+        if (otherGameObject != null)
+        {
+            cuttingBoardManager = otherGameObject.GetComponent<CuttingBoardManager>();
+        }
     }
 
     public void hideIntro()
