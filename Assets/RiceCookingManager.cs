@@ -3,6 +3,7 @@ using UnityEngine.VFX;
 
 public class RiceCookingManager : MonoBehaviour
 {
+    public bool RiceDone = false;
     [Header("Rice Pouring")]
     public ParticleSystem ricePouringParticles;  
     public Transform bowlTransform;               
@@ -126,6 +127,7 @@ public class RiceCookingManager : MonoBehaviour
             {
                 Debug.Log("Lid is in the trigger area but not close enough to snap.");
             }
+            RiceDone = true;
         }
     }
 

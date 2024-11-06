@@ -17,6 +17,8 @@ public class CookingManager : MonoBehaviour
     private Collider panCollider;
     private GameObject chickenBeingCooked;
 
+    public bool FryingDone = false;
+
     private void Start()
     {
         panCollider = GetComponent<Collider>();
@@ -129,6 +131,8 @@ public class CookingManager : MonoBehaviour
             {
                 renderer.material = cookedChickenMaterial;
                 Debug.Log("Chicken material changed to cooked.");
+
+                FryingDone = true;
             }
         }
     }
