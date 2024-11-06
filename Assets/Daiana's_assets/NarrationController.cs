@@ -14,9 +14,9 @@ public class NarrationController : MonoBehaviour
 
     //connecting scripts for cutting, rice, boiling and frying
     public CuttingBoardManager cuttingBoardManager;
-    public RiceCookingManager riceCookingManager;
     public CurryCookingManager curryCookingManager;
-    
+    public CookingManager cookingManager;
+    public RiceCookingManager riceCookingManager;
 
     public void Start()
     {
@@ -27,16 +27,22 @@ public class NarrationController : MonoBehaviour
             cuttingBoardManager = otherGameObject.GetComponent<CuttingBoardManager>();
         }
 
-        GameObject otherGameObject = GameObject.Find("cooking pott! (1)");
-        if (otherGameObject != null)
+        GameObject otherGameObjectCurry = GameObject.Find("cooking pott! (1)");
+        if (otherGameObjectCurry != null)
         {
-            curryCookingManager = otherGameObject.GetComponent<CurryCookingManager>();
+            curryCookingManager = otherGameObjectCurry.GetComponent<CurryCookingManager>();
         }
 
-        GameObject otherGameObject = GameObject.Find("Rice Cooker with Rice fbx");
-        if (otherGameObject != null)
+        GameObject otherGameObjectFrying = GameObject.Find("FRYING PAN done (1)");
+        if (otherGameObjectFrying != null)
         {
-            riceCookingManager = otherGameObject.GetComponent<RiceCookingManager>();
+            cookingManager = otherGameObjectFrying.GetComponent<CookingManager>();
+        }
+
+        GameObject otherGameObjectRice = GameObject.Find("Rice Cooker with Rice fbx");
+        if (otherGameObjectRice != null)
+        {
+            riceCookingManager = otherGameObjectRice.GetComponent<RiceCookingManager>();
         }
 
     }
@@ -92,17 +98,24 @@ public class NarrationController : MonoBehaviour
 
       if (curryCookingManager.CurryDone == true)
       {
+            cuttingBoardManager.CuttingComplete = false;
             hideStepOne();
             showStepTwo();
       }
 
-
+      if (cookingManager.FryingDone == true)
+      {
+            curryCookingManager.CurryDone = false;
+            hideStepTwo();
+            showStepThree();
+      }
 
       if (riceCookingManager.RiceDone == true)
-        {
+      {
+            cookingManager.FryingDone = false;
             hideStepThree();
             showDonezo();
-        }
+      }
     }
    
     

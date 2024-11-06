@@ -174,9 +174,11 @@ public class CurryCookingManager : MonoBehaviour
         {
             poofEffect.Play();
             Debug.Log("Poof effect played to indicate curry cube addition.");
+
+            CurryDone = true;
         }
 
-        CurryDone = true;
+        
     }
 }
 
