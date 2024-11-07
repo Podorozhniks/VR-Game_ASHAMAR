@@ -562,6 +562,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!114 &27987948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,7 +922,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &45200997
 RectTransform:
   m_ObjectHideFlags: 0
@@ -956,6 +958,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!1 &50407582
 GameObject:
   m_ObjectHideFlags: 0
@@ -1435,6 +1439,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!61 &136264375
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1533,6 +1539,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!114 &168739450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1874,6 +1882,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  directionalLightIntensity: 30.59
 --- !u!1 &266422635
 GameObject:
   m_ObjectHideFlags: 0
@@ -4307,6 +4317,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!1001 &1348701047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4757,7 +4769,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1463099195
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4930,6 +4942,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!61 &1562922838
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5219,6 +5233,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!114 &1660103469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5518,6 +5534,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39dd6048312f0b479f346306ee21709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambientLightColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  directionalLightIntensity: 1
 --- !u!114 &1761554114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6144,6 +6162,10 @@ PrefabInstance:
     - target: {fileID: 492947389833507290, guid: c385f565413403c4390ffb9519a12eb1, type: 3}
       propertyPath: m_Name
       value: XR Device Simulator
+      objectReference: {fileID: 0}
+    - target: {fileID: 492947389833507290, guid: c385f565413403c4390ffb9519a12eb1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3388420981682935760, guid: c385f565413403c4390ffb9519a12eb1, type: 3}
       propertyPath: m_LocalPosition.x
